@@ -3,6 +3,7 @@ import torch
 import yaml
 import numpy as np
 import tqdm
+import glob
 from utils.datasets.dataset import BaseDataset
 
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -62,9 +63,8 @@ class SemanticPOSSDataset(BaseDataset):
         self.remap_lut_val = remap_lut_val
 
         for sequence in self.split[self.phase]:
-            num_frames = len(os.listdir(os.path.join(self.dataset_path, sequence, 'labels')))
-
-            for f in np.arange(num_frames):
+            frame_nums = self.get_frame_nums(sequence)
+            for f in frame_nums:
                 pcd_path = os.path.join(self.dataset_path, sequence, 'velodyne', f'{int(f):06d}.bin')
                 label_path = os.path.join(self.dataset_path, sequence, 'labels', f'{int(f):06d}.label')
 
@@ -109,11 +109,10 @@ class SemanticPOSSDataset(BaseDataset):
 
         sampled_idx = np.arange(points.shape[0])
 
-        if self.phase == 'train' and self.augment_data:
-            sampled_idx = self.random_sample(points)
-            points = points[sampled_idx]
-            colors = colors[sampled_idx]
-            labels = labels[sampled_idx]
+        sampled_idx = self.random_sample(points)
+        points = points[sampled_idx]
+        colors = colors[sampled_idx]
+        labels = labels[sampled_idx]
 
         quantized_coords, feats, labels = (points, colors, labels)
         

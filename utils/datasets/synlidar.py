@@ -40,8 +40,10 @@ class SynLiDARDataset(BaseDataset):
         self.name = 'SynLiDARDataset'
         if self.version == 'full':
             # self.sequences = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+            # self.get_splits()
             self.sequences = ['00']
-            self.get_splits()
+            self.split = {'train': {'00': []},
+                          'validation': {'00': []}}
         elif self.version == 'mini':
             self.sequences = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
             self.get_splits()
@@ -64,7 +66,8 @@ class SynLiDARDataset(BaseDataset):
 
         self.remap_lut_val = remap_lut_val
 
-        for sequence, frames in self.split[self.phase].items():
+        for sequence in self.split[self.phase].keys():
+            frames = self.get_frame_nums(sequence)
             for frame in frames:
                 pcd_path = os.path.join(self.dataset_path, sequence, 'velodyne', f'{int(frame):06d}.bin')
                 label_path = os.path.join(self.dataset_path, sequence, 'labels', f'{int(frame):06d}.label')
@@ -82,7 +85,7 @@ class SynLiDARDataset(BaseDataset):
             split_path = os.path.join(ABSOLUTE_PATH, '_splits/synlidar_sequential.pkl')
         else:
             raise NotImplementedError
-
+        
         if not os.path.isfile(split_path):
             self.split = {'train': {s: [] for s in self.sequences},
                           'validation': {s: [] for s in self.sequences}}
@@ -184,11 +187,7 @@ class SynLiDARDataset(BaseDataset):
         if isinstance(labels, np.ndarray):
             labels = torch.from_numpy(labels)
 
-        if isinstance(voxel_idx, np.ndarray):
-            voxel_idx = torch.from_numpy(voxel_idx)
-
         if sampled_idx is not None:
-            sampled_idx = sampled_idx[voxel_idx]
             sampled_idx = torch.from_numpy(sampled_idx)
         else:
             sampled_idx = None

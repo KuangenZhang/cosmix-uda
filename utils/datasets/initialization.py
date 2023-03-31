@@ -109,13 +109,13 @@ def get_dataset(dataset_name: str,
         validation_dataset.color_map = synlidar2kitti_color
 
     elif dataset_name == 'SynLiDAR':
-
         training_dataset = SynLiDARDataset(dataset_path=dataset_path,
                                            version=version,
                                            phase='train',
                                            voxel_size=voxel_size,
                                            augment_data=augment_data,
                                            num_classes=num_classes,
+                                           sub_num=sub_num,
                                            ignore_label=ignore_label,
                                            mapping_path=mapping_path,
                                            weights_path=weights_path)
@@ -125,6 +125,7 @@ def get_dataset(dataset_name: str,
                                              phase='validation',
                                              voxel_size=voxel_size,
                                              augment_data=False,
+                                             sub_num=sub_num,
                                              num_classes=num_classes,
                                              ignore_label=ignore_label,
                                              mapping_path=mapping_path,
@@ -141,6 +142,7 @@ def get_dataset(dataset_name: str,
                                                   phase='validation',
                                                   voxel_size=voxel_size,
                                                   augment_data=False,
+                                                  sub_num=sub_num,
                                                   num_classes=num_classes,
                                                   ignore_label=ignore_label)
 
@@ -162,6 +164,7 @@ def get_dataset(dataset_name: str,
                                                  phase='validation',
                                                  voxel_size=voxel_size,
                                                  augment_data=False,
+                                                 sub_num=sub_num,
                                                  num_classes=num_classes,
                                                  ignore_label=ignore_label)
 

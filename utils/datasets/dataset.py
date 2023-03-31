@@ -1,6 +1,7 @@
 import os
 import pickle
 import numpy as np
+import glob
 from torch.utils.data import Dataset
 
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -34,12 +35,7 @@ class BaseDataset(Dataset):
         self.num_classes = num_classes
 
         self.ignore_label = ignore_label
-
-        if self.ignore_label is None:
-            vox_ign_label = -100
-        else:
-            vox_ign_label = self.ignore_label
-
+        
         # for input augs
         # self.clip_bounds = ((-100, 100), (-100, 100), (-100, 100))
         self.clip_bounds = None
@@ -86,4 +82,9 @@ class BaseDataset(Dataset):
             sampled_idx = np.arange(num_points)
 
         return sampled_idx
-
+    
+    def get_frame_nums(self, sequence: str):
+        file_list = glob.glob(os.path.join(self.dataset_path, sequence, 'labels', '*.label'))
+        # convert file names to frame numbers
+        frame_nums = [int(os.path.basename(file).split('.')[0]) for file in file_list]
+        return frame_nums

@@ -2,8 +2,9 @@
 
 
 ## Modification
-1. Remove  MinkowskiEngine dependency and only randomly sample the points based on the given sub_num.
-2. Replace the current model to PointCNN.
+*. Remove  MinkowskiEngine dependency and only randomly sample the points based on the given sub_num.
+*. The ignored label is only used for the loss calculation rather than sampling.
+*. Replace the current model to PointCNN.
 
 ## Origianl README
 The official implementation of our work "CoSMix: Compositional Semantic Mix for Domain Adaptation in 3D LiDAR Segmentation".

@@ -1,1 +1,1 @@
-from .minkunet import MinkUNet34
+from .pointcnn import PointCNN

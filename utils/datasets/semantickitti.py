@@ -67,9 +67,8 @@ class SemanticKITTIDataset(BaseDataset):
         self.remap_lut_val = remap_lut_val
 
         for sequence in self.split[self.phase]:
-            num_frames = len(os.listdir(os.path.join(self.dataset_path, sequence, 'labels')))
-
-            for f in np.arange(num_frames):
+            frame_nums = self.get_frame_nums(sequence)
+            for f in frame_nums:
                 pcd_path = os.path.join(self.dataset_path, sequence, 'velodyne', f'{int(f):06d}.bin')
                 label_path = os.path.join(self.dataset_path, sequence, 'labels', f'{int(f):06d}.label')
                 self.pcd_path.append(pcd_path)

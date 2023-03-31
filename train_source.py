@@ -5,13 +5,12 @@ import torch
 from torch.utils.data import DataLoader
 from utils.datasets.initialization import get_dataset
 from configs import get_config
-from utils.collation import CollateFN
 
 # import time
 # from pytorch_lightning import Trainer
 # from pytorch_lightning.callbacks import ModelCheckpoint
 # from pytorch_lightning.loggers import WandbLogger
-# import utils.models as models
+import utils.models as models
 # from utils.pipelines import PLTTrainer
 
 parser = argparse.ArgumentParser()
@@ -23,10 +22,9 @@ parser.add_argument("--config_file",
 
 def train(config):
 
-    def get_dataloader(dataset, batch_size, collate_fn=CollateFN(), shuffle=False, pin_memory=True):
+    def get_dataloader(dataset, batch_size, shuffle=False, pin_memory=True):
         return DataLoader(dataset,
                           batch_size=batch_size,
-                          collate_fn=collate_fn,
                           shuffle=shuffle,
                           num_workers=config.pipeline.dataloader.num_workers,
                           pin_memory=pin_memory)
@@ -46,22 +44,30 @@ def train(config):
                                                                        ignore_label=config.dataset.ignore_label,
                                                                        mapping_path=mapping_path)
 
-    collation = CollateFN()
     training_dataloader = get_dataloader(training_dataset,
-                                         collate_fn=collation,
                                          batch_size=config.pipeline.dataloader.batch_size,
                                          shuffle=True)
-    # Get one batch of data
-    training_data = next(iter(training_dataloader))
-    for key in training_data.keys():
-        print(f'{key}: {training_data[key].shape}')
-    
-    """
     validation_dataloader = get_dataloader(validation_dataset,
-                                           collate_fn=collation,
                                            batch_size=config.pipeline.dataloader.batch_size*4,
                                            shuffle=False)
 
+    # get one data from dataloader
+    data = next(iter(training_dataloader))
+    for key, value in data.items():
+        if key == 'labels':
+            print(torch.unique(value))
+        print(key, value.shape)
+    
+    print('Target dataset:')
+    data = target_dataset.__getitem__(0)
+    for key, value in data.items():
+        if key == 'labels':
+            print(torch.unique(value))
+        print(key, value.shape)
+
+    # Model = getattr(models, config.model.name)
+    
+    """
     Model = getattr(models, config.model.name)
     model = Model(config.model.in_feat_size, config.model.out_classes)
 

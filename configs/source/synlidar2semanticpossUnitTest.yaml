@@ -1,7 +1,7 @@
 model:
-  name: 'MinkUNet34'
+  name: 'PointCNN'
   in_feat_size: 1
-  out_classes: 19
+  out_classes: 13
 
 dataset:
   version: 'full'
@@ -27,7 +27,7 @@ pipeline:
 
   dataloader:
     batch_size: 4
-    num_workers: 16
+    num_workers: 4
 
   optimizer:
     name: 'SGD'
