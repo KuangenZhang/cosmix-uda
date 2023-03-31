@@ -1,8 +1,15 @@
 # **CoSMix: Compositional Semantic Mix for Domain Adaptation in 3D LiDAR Segmentation [ECCV2022]**
 
+
+## Modification
+1. Remove  MinkowskiEngine dependency and only randomly sample the points based on the given sub_num.
+2. Replace the current model to PointCNN.
+
+## Origianl README
 The official implementation of our work "CoSMix: Compositional Semantic Mix for Domain Adaptation in 3D LiDAR Segmentation".
 
 ![output](https://user-images.githubusercontent.com/56728964/179716779-09e4b4bb-a7b3-4364-83ec-e876ca359adf.gif)
+
 
 
 ## Introduction
