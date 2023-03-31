@@ -2,15 +2,12 @@ import os
 import pickle
 import numpy as np
 from torch.utils.data import Dataset
-from utils.sampling.voxelizer import Voxelizer
 
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__file__))
-
 
 def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
-
 
 class BaseDataset(Dataset):
     def __init__(self,
@@ -49,14 +46,6 @@ class BaseDataset(Dataset):
         self.scale_augmentation_bound = (0.95, 1.05)
         self.rotation_augmentation_bound = ((-np.pi / 20, np.pi / 20), (-np.pi / 20, np.pi / 20), (-np.pi / 20, np.pi / 20))
         self.translation_augmentation_ratio_bound = None
-
-        self.voxelizer = Voxelizer(voxel_size=self.voxel_size,
-                                   clip_bound=self.clip_bounds,
-                                   use_augmentation=self.augment_data,
-                                   scale_augmentation_bound=self.scale_augmentation_bound,
-                                   rotation_augmentation_bound=self.rotation_augmentation_bound,
-                                   translation_augmentation_ratio_bound=self.translation_augmentation_ratio_bound,
-                                   ignore_label=vox_ign_label)
 
         self.device = device
 

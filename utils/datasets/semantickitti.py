@@ -3,8 +3,6 @@ import torch
 import yaml
 import numpy as np
 import tqdm
-
-import MinkowskiEngine as ME
 from utils.datasets.dataset import BaseDataset
 
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -40,9 +38,11 @@ class SemanticKITTIDataset(BaseDataset):
                          weights_path=weights_path)
 
         if self.version == 'full':
-            self.split = {'train': ['00', '01', '02', '03', '04', '05',
-                                    '06', '07', '09', '10'],
-                          'validation': ['08']}
+            self.split = {'train': ['00'],
+                          'validation': ['00']}
+            # self.split = {'train': ['00', '01', '02', '03', '04', '05',
+            #                         '06', '07', '09', '10'],
+            #               'validation': ['08']}
         elif self.version == 'mini':
             self.split = {'train': ['00', '01'],
                           'validation': ['08']}
@@ -124,28 +124,10 @@ class SemanticKITTIDataset(BaseDataset):
             colors = colors[sampled_idx]
             labels = labels[sampled_idx]
 
-            voxel_mtx, affine_mtx = self.voxelizer.get_transformation_matrix()
-
-            rigid_transformation = affine_mtx @ voxel_mtx
-            # Apply transformations
-
-            homo_coords = np.hstack((points, np.ones((points.shape[0], 1), dtype=points.dtype)))
-            # coords = np.floor(homo_coords @ rigid_transformation.T[:, :3])
-            points = homo_coords @ rigid_transformation.T[:, :3]
-
-        if self.ignore_label is None:
-            vox_ign_label = -100
-        else:
-            vox_ign_label = self.ignore_label
-
-        quantized_coords, feats, labels, voxel_idx = ME.utils.sparse_quantize(points,
-                                                                               colors,
-                                                                               labels=labels,
-                                                                               ignore_label=vox_ign_label,
-                                                                               quantization_size=self.voxel_size,
-                                                                               return_index=True)
-
-        missing_pts = self.sub_num - quantized_coords.shape[0]
+        quantized_coords = points
+        feats = colors
+        labels = labels
+        
         if isinstance(quantized_coords, np.ndarray):
             quantized_coords = torch.from_numpy(quantized_coords)
 
@@ -159,7 +141,6 @@ class SemanticKITTIDataset(BaseDataset):
             voxel_idx = torch.from_numpy(voxel_idx)
 
         if sampled_idx is not None:
-            sampled_idx = sampled_idx[voxel_idx]
             sampled_idx = torch.from_numpy(sampled_idx)
         else:
             sampled_idx = None

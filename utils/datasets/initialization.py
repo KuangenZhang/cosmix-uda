@@ -1,11 +1,11 @@
 import os
 import numpy as np
 from utils.datasets.dataset import BaseDataset
-from utils.datasets.concat_dataset import ConcatDataset
 from utils.datasets.semantickitti import SemanticKITTIDataset
 from utils.datasets.semanticposs import SemanticPOSSDataset
 from utils.datasets.synlidar import SynLiDARDataset
 
+# from utils.datasets.concat_dataset import ConcatDataset
 
 synlidar2kitti = np.array(['car', 'bicycle', 'motorcycle',  'truck', 'other-vehicle', 'person',
                            'bicyclist', 'motorcyclist',
@@ -210,14 +210,14 @@ def get_dataset(dataset_name: str,
     return training_dataset, validation_dataset, target_dataset
 
 
-def get_concat_dataset(source_dataset,
-                       target_dataset,
-                       augment_data=False,
-                       augment_mask_data=False,
-                       remove_overlap=False):
+# def get_concat_dataset(source_dataset,
+#                        target_dataset,
+#                        augment_data=False,
+#                        augment_mask_data=False,
+#                        remove_overlap=False):
 
-    return ConcatDataset(source_dataset=source_dataset,
-                         target_dataset=target_dataset,
-                         augment_data=augment_data,
-                         augment_mask_data=augment_mask_data,
-                         remove_overlap=remove_overlap)
+#     return ConcatDataset(source_dataset=source_dataset,
+#                          target_dataset=target_dataset,
+#                          augment_data=augment_data,
+#                          augment_mask_data=augment_mask_data,
+#                          remove_overlap=remove_overlap)

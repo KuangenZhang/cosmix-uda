@@ -2,8 +2,6 @@ import os
 import torch
 import yaml
 import numpy as np
-
-import MinkowskiEngine as ME
 from utils.datasets.dataset import BaseDataset
 
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +39,8 @@ class SynLiDARDataset(BaseDataset):
 
         self.name = 'SynLiDARDataset'
         if self.version == 'full':
-            self.sequences = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+            # self.sequences = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+            self.sequences = ['00']
             self.get_splits()
         elif self.version == 'mini':
             self.sequences = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
@@ -174,27 +173,8 @@ class SynLiDARDataset(BaseDataset):
             colors = colors[sampled_idx]
             labels = labels[sampled_idx]
 
-            voxel_mtx, affine_mtx = self.voxelizer.get_transformation_matrix()
-
-            rigid_transformation = affine_mtx @ voxel_mtx
-            # Apply transformations
-
-            homo_coords = np.hstack((points, np.ones((points.shape[0], 1), dtype=points.dtype)))
-            # coords = np.floor(homo_coords @ rigid_transformation.T[:, :3])
-            points = homo_coords @ rigid_transformation.T[:, :3]
-
-        if self.ignore_label is None:
-            vox_ign_label = -100
-        else:
-            vox_ign_label = self.ignore_label
-
-        quantized_coords, feats, labels, voxel_idx = ME.utils.sparse_quantize(points,
-                                                                               colors,
-                                                                               labels=labels,
-                                                                               ignore_label=vox_ign_label,
-                                                                               quantization_size=self.voxel_size,
-                                                                               return_index=True)
-
+        quantized_coords, feats, labels = (points, colors, labels)
+        
         if isinstance(quantized_coords, np.ndarray):
             quantized_coords = torch.from_numpy(quantized_coords)
 

@@ -1,24 +1,22 @@
 import os
-import time
 import argparse
 import numpy as np
-
 import torch
 from torch.utils.data import DataLoader
-from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.loggers import WandbLogger
-import MinkowskiEngine as ME
-
-import utils.models as models
 from utils.datasets.initialization import get_dataset
 from configs import get_config
 from utils.collation import CollateFN
-from utils.pipelines import PLTTrainer
+
+# import time
+# from pytorch_lightning import Trainer
+# from pytorch_lightning.callbacks import ModelCheckpoint
+# from pytorch_lightning.loggers import WandbLogger
+# import utils.models as models
+# from utils.pipelines import PLTTrainer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config_file",
-                    default="configs/source/synlidar2semantickitti.yaml",
+                    default="configs/source/synlidar2semanticpossUnitTest.yaml",
                     type=str,
                     help="Path to config file")
 
@@ -53,7 +51,12 @@ def train(config):
                                          collate_fn=collation,
                                          batch_size=config.pipeline.dataloader.batch_size,
                                          shuffle=True)
-
+    # Get one batch of data
+    training_data = next(iter(training_dataloader))
+    for key in training_data.keys():
+        print(f'{key}: {training_data[key].shape}')
+    
+    """
     validation_dataloader = get_dataloader(validation_dataset,
                                            collate_fn=collation,
                                            batch_size=config.pipeline.dataloader.batch_size*4,
@@ -111,13 +114,14 @@ def train(config):
     trainer.fit(pl_module,
                 train_dataloaders=training_dataloader,
                 val_dataloaders=validation_dataloader)
+    """
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
 
     config = get_config(args.config_file)
-
+    
     # fix random seed
     os.environ['PYTHONHASHSEED'] = str(config.pipeline.seed)
     np.random.seed(config.pipeline.seed)
